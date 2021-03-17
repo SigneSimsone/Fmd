@@ -1,0 +1,123 @@
+#include <iostream>
+#include <iomanip>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+using namespace std;
+
+//Dod iespēju programmu izpildīt atkārtoti
+int End() {
+	int IsRunning;
+	cout << "Vai turpinat (1) vai beigt (0)?" << endl;
+	cin >> IsRunning;
+	return IsRunning;
+}
+
+//Izveido un piešķir masīva elementu vērtības - no 1 līdz masīva izmēram katrā rindā
+void CreateArray(int**& Matrix, int ArraySize) {
+	Matrix = new int* [ArraySize];
+	for (int i = 0; i < ArraySize; i++) {
+		Matrix[i] = new int[ArraySize];
+	}
+	for (int i = 0; i < ArraySize; i++) {
+		for (int j = 0; j < ArraySize; j++) {
+			Matrix[i][j] = j + 1;
+		}
+	}
+}
+
+//Sajauc masīvā katru rindu atsevišķi
+void ShuffleArray(int** Matrix, int ArraySize) {
+	srand(time(NULL));
+	int temp;
+	int random;
+
+	for (int i = 0; i < ArraySize; i++) {
+		for (int j = 0; j < ArraySize; j++) {
+			random = i + rand() / (RAND_MAX / (ArraySize - i) + 1);
+			temp = Matrix[i][random];
+			Matrix[i][random] = Matrix[i][j];
+			Matrix[i][j] = temp;
+		}
+	}
+}
+
+//Izdrukā matricu
+void PrintArray(int ArraySize, int** Matrix) {
+	for (int i = 0; i < ArraySize; i++) {
+		for (int j = 0; j < ArraySize; j++) {
+			cout << setw(3) << Matrix[i][j];
+		}
+		cout << endl;
+	}
+}
+
+//Pārbauda, vai masīva rindas summa sakrīt ar kolonnas summu
+bool IsMatrixLatinSquare(int** Matrix, int ArraySize) {
+	int RowSum = 0;
+	int ColSum = 0;
+	for (int row = 0; row < ArraySize; row++) {
+		for (int column = 0; column < ArraySize; column++) {
+			RowSum += Matrix[row][column];
+			ColSum += Matrix[column][row];
+		}
+		if (RowSum != ColSum) {
+			return false;
+		}
+	}
+	return true;
+}
+
+// Secina, vai matrica ir latīņu kvadrāts
+void PrintResult(int** Matrix, int ArraySize) {
+	if (IsMatrixLatinSquare(Matrix, ArraySize)) {
+		cout << endl;
+		cout << "Matrica ir latinu kvadrats" << endl;
+	}
+	else {
+		cout << endl;
+		cout << "Matrica nav latinu kvadrats" << endl;
+	}
+}
+
+int main() {
+	int IsRunning = 1;
+	while (IsRunning == 1) {
+
+		int** Matrix;
+		int ArraySize;
+		int Count = 0;
+
+		cout << "Ievadiet masiva izmeru:" << endl;
+		cin >> ArraySize;
+		cout << endl;
+
+		//Pārbaude, ja ievadīti negatīvi skaitļi vai 0
+		if (ArraySize < 1) {
+			cout << "Nepareizi dati" << endl;
+			if (End() == 1)
+			{continue;}
+			else
+			{break;}
+		}
+		else {
+			CreateArray(Matrix, ArraySize);
+
+			ShuffleArray(Matrix, ArraySize);
+			
+			PrintArray(ArraySize, Matrix);
+
+			PrintResult(Matrix, ArraySize);
+			
+			for (int i = 0; i < ArraySize; i++) {
+				delete[] Matrix[i];
+			}
+			delete[] Matrix;
+		}
+
+		if (End() == 1)
+		{continue;}
+		else
+		{break;}
+	}
+}
